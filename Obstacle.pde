@@ -8,8 +8,8 @@ class Obstacle {
     h = he;
   }
   
-  boolean contains(PVector v) {
-    if(v.x > location.x && v.x < location.x + w && v.y > location.y && v.y < location.y + h) {
+  boolean contains(PVector v, int size) {
+    if(v.x + size/2 > location.x && v.x - size/2 < location.x + w && v.y + size/2 > location.y && v.y - size/2 < location.y + h) {
       return true;
     } else {
       return false;

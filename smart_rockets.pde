@@ -2,18 +2,19 @@ int lifetime;
 int lifeCounter;
 int genCount;
 int reachedAmount;
-int populationSize = 20;
+int populationSize = 50;
+int avgTimeTaken;
 
 float percentReachedTarget;
 float mutationRate;
 
 Population population;
-
 Target target;
+Graph graph;
 
 void setup() {
   size(640, 480);
-  lifetime = 700;
+  lifetime = 1000;
   lifeCounter = 0;
   genCount = 1;
   
@@ -21,6 +22,8 @@ void setup() {
   
   mutationRate = 0.01;
   population = new Population(mutationRate, populationSize, lifetime, target);
+  
+  graph = new Graph(200,100);
 }
 
 void draw() {
@@ -30,10 +33,17 @@ void draw() {
     population.live(lifeCounter);
   } else {
     reachedAmount = 0;
+    avgTimeTaken = 0;
     for(int i = 0; i < population.population.length; i++) {
-      if(population.population[i].reachedTarget) reachedAmount++;
+      if(population.population[i].reachedTarget) {
+        reachedAmount++;
+        avgTimeTaken += population.population[i].lifeCounter;
+      }
     }
     percentReachedTarget = float(reachedAmount)/float(population.population.length)*100.0;
+    if(reachedAmount > 0) avgTimeTaken /= reachedAmount;
+    
+    graph.update(avgTimeTaken);
     
     population.fitness();
     population.selection();
@@ -45,16 +55,18 @@ void draw() {
   
   target.display();
   population.display();
+  graph.display();
   
   int textMargin = 4;
   
   fill(200,50);
   noStroke();
-  rect(0,0,250,62);
+  rect(0,0,250,74);
   fill(0);
   text("Time Left In Gen: " + (lifetime - lifeCounter),textMargin,12);
   text("Percent Hit Target Last Gen: " + percentReachedTarget + "%",textMargin,24);
   text("Gen: " + genCount,textMargin,36);
   text("Mutation Rate: " + mutationRate*100 + "%",textMargin,48);
   text("Population Size: " + populationSize,textMargin,60);
+  text("Avg. Time To Target Last Gen: " + avgTimeTaken,textMargin,72);
 }

@@ -53,8 +53,8 @@ class Rocket {
     float d = PVector.dist(location,target.location);
     fitness = 1/d;
     if(stopped) fitness *= 0.08;
-    if(reachedTarget) fitness *= 1.5;
-    fitness *= -(1.5/600)*lifeCounter+1.5;
+    if(reachedTarget) fitness *= 3.0;
+    if(reachedTarget) fitness *= -(1.5/lifetime)*lifeCounter+1.5;
   }
   
   Rocket crossover(Rocket partner) {
@@ -75,15 +75,17 @@ class Rocket {
   
   Rocket crossoverMidpoint(Rocket partner) {
     Rocket child = new Rocket(lifetime, obstacles);
-    
     int midpoint = int(random(0,dna.genes.length));
+    int f = int(random(2));
     
     for(int i = 0; i < dna.genes.length; i++) {
       if(i < midpoint) {
-        child.dna.genes[i] = dna.genes[i];
+        if(f == 0) child.dna.genes[i] = dna.genes[i];
+        else child.dna.genes[i] = partner.dna.genes[i];
         //System.out.println("parent a");
       } else {
-        child.dna.genes[i] = partner.dna.genes[i];
+        if(f == 1) child.dna.genes[i] = dna.genes[i];
+        else child.dna.genes[i] = partner.dna.genes[i];
         //System.out.println(child.dna.genes[i]);
       }
     }
@@ -125,7 +127,7 @@ class Rocket {
   
   void obstacles() {
     for(Obstacle obs : obstacles) {
-      if(obs.contains(location)) {
+      if(obs.contains(location, size)) {
         //System.out.println("STOP");
         stopped = true;
       }
@@ -134,7 +136,7 @@ class Rocket {
   
   void hitTarget() {
     float d = PVector.dist(location,target.location);
-    if(d <= target.size/2) {
+    if(d <= target.size/2+size/2) {
       //System.out.println("TARGET");
       reachedTarget = true;
     }
