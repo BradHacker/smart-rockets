@@ -8,12 +8,23 @@ int avgTimeTaken;
 float percentReachedTarget;
 float mutationRate;
 
+boolean fullscreen = true;
+boolean crossoverTypeMidpoint = true;
+
 Population population;
 Target target;
 Graph graph;
 
+void settings() {
+  if(fullscreen) {
+    fullScreen();
+  }
+}
+
 void setup() {
-  size(640, 480);
+  if(!fullscreen) {
+    size(600,400);
+  }
   lifetime = 1000;
   lifeCounter = 0;
   genCount = 1;
@@ -21,7 +32,7 @@ void setup() {
   target = new Target();
   
   mutationRate = 0.01;
-  population = new Population(mutationRate, populationSize, lifetime, target);
+  population = new Population(mutationRate, populationSize, lifetime, target, crossoverTypeMidpoint);
   
   graph = new Graph(200,100);
 }

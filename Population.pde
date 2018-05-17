@@ -5,14 +5,15 @@ class Population {
   int generations;
   Target target;
   ArrayList<Obstacle> obstacles;
+  boolean crossovermidpoint = true;
 
-  Population(float mRate, int size, int lifetime, Target _target) {
+  Population(float mRate, int size, int lifetime, Target _target, boolean midpoint) {
     mutationRate = mRate;
     population = new Rocket[size];
 
     obstacles = new ArrayList<Obstacle>();
 
-    int obstacleWidth = int(random(100, 300));
+    int obstacleWidth = int(random(width*.2, width*.6));
     int obstacleHeight = 10;
 
     obstacles.add(new Obstacle(new PVector(random(0, width-obstacleWidth), 200), obstacleWidth, obstacleHeight));
@@ -24,6 +25,8 @@ class Population {
     target = _target;
 
     matingPool = new ArrayList<Rocket>();
+
+    crossovermidpoint = midpoint;
   }
 
   void fitness() {
@@ -50,7 +53,12 @@ class Population {
       Rocket parentA = matingPool.get(a);
       Rocket parentB = matingPool.get(b);
 
-      Rocket child = parentA.crossoverMidpoint(parentB);
+      Rocket child;
+      if(crossovermidpoint) {
+        child = parentA.crossoverMidpoint(parentB);
+      } else {
+        child = parentA.crossover(parentB);
+      }
       child.mutate(mutationRate);
 
       population[i] = child;
